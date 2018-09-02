@@ -11,11 +11,16 @@
         <title>Ducks: Redux Reducer Bundles</title>
     </head>
     <body>
-        <div class="container">
+        <div class="doc container">
             <div class="row">
                 <div class="col-md-4">
-                    <nav id="navbar">
-                        <header>Redux Ducks</header>
+                    <nav id="navbar" class="doc-nav">
+                        <img
+                            src="./assets/duck.png"
+                            alt="Redux Ducks"
+                            class="doc-nav__image"
+                        />
+                        <header class="doc-nav__header">Redux Ducks</header>
                         <ul class="nav flex-column">
                             <li class="nav-item">
                                 <a
@@ -93,213 +98,191 @@
                     </nav>
                 </div>
                 <div class="col-md-8">
-                    <main id="main-doc">
+                    <main id="main-doc" class="doc-content">
                         <section id="Ducks:_Redux_Reducer_Bundles" class="main-section">
                             <header>
                                 <h1 id="ducksreduxreducerbundles">Ducks: Redux Reducer Bundles</h1>
-                
-                                <p><img src="./assets/duck.jpg" align="right" /></p>
                             </header>
-            
+
                             <p>I find as I am building my redux app, one piece of functionality at a time, I keep needing to add <code>{actionTypes, actions, reducer}</code> tuples for each use case. I have been keeping these in separate files and even separate folders, however 95% of the time, it's only one reducer/actions pair that ever needs their associated actions.</p>
-            
+
                             <p>To me, it makes more sense for these pieces to be bundled together in an isolated module that is self contained, and can even be packaged easily into a library.</p>
                         </section>
-            
+
                         <section id="The_Proposal" class="main-section">
                             <header>
                                 <h2 id="theproposal">The Proposal</h2>
                             </header>
-            
+
                             <p>See also: <a href="CommonJs.md">Common JS Example</a>.</p>
-            
-                            <pre><code class="javascript language-javascript">
-                            // widgets.js
-            
-                            // Actions
-                            const LOAD   = 'my-app/widgets/LOAD';
-                            const CREATE = 'my-app/widgets/CREATE';
-                            const UPDATE = 'my-app/widgets/UPDATE';
-                            const REMOVE = 'my-app/widgets/REMOVE';
-            
-                            // Reducer
-                            export default function reducer(state = {}, action = {}) {
-                                switch (action.type) {
-                                // do reducer stuff
-                                default: return state;
-                                }
-                            }
-            
-                            // Action Creators
-                            export function loadWidgets() {
-                                return { type: LOAD };
-                            }
-            
-                            export function createWidget(widget) {
-                                return { type: CREATE, widget };
-                            }
-            
-                            export function updateWidget(widget) {
-                                return { type: UPDATE, widget };
-                            }
-            
-                            export function removeWidget(widget) {
-                                return { type: REMOVE, widget };
-                            }
-            
-                            // side effects, only as applicable
-                            // e.g. thunks, epics, etc
-                            export function getWidget () {
-                                return dispatch =&gt; get('/widget').then(widget =&gt; dispatch(updateWidget(widget)))
-                            }
+
+                            <pre><code class="javascript language-javascript">// widgets.js
+
+// Actions
+const LOAD   = 'my-app/widgets/LOAD';
+const CREATE = 'my-app/widgets/CREATE';
+const UPDATE = 'my-app/widgets/UPDATE';
+const REMOVE = 'my-app/widgets/REMOVE';
+
+// Reducer
+export default function reducer(state = {}, action = {}) {
+    switch (action.type) {
+    // do reducer stuff
+    default: return state;
+    }
+}
+
+// Action Creators
+export function loadWidgets() {
+    return { type: LOAD };
+}
+
+export function createWidget(widget) {
+    return { type: CREATE, widget };
+}
+
+export function updateWidget(widget) {
+    return { type: UPDATE, widget };
+}
+
+export function removeWidget(widget) {
+    return { type: REMOVE, widget };
+}
+
+// side effects, only as applicable
+// e.g. thunks, epics, etc
+export function getWidget () {
+    return dispatch =&gt; get('/widget').then(widget =&gt; dispatch(updateWidget(widget)))
+}
                             </code></pre>
                         </section>
-            
+
                         <section id="Rules" class="main-section">
                             <header>
                                 <h3 id="rules">Rules</h3>
                             </header>
-            
+
                             <p>A module...</p>
-            
+
                             <ol>
                                 <li>MUST <code>export default</code> a function called <code>reducer()</code></li>
-            
+
                                 <li>MUST <code>export</code> its action creators as functions</li>
-            
+
                                 <li>MUST have action types in the form <code>npm-module-or-app/reducer/ACTION_TYPE</code></li>
-            
+
                                 <li>MAY export its action types as <code>UPPER_SNAKE_CASE</code>, if an external reducer needs to listen for them, or if it is a published reusable library</li>
                             </ol>
-            
+
                             <p>These same guidelines are recommended for <code>{actionType, action, reducer}</code> bundles that are shared as reusable Redux libraries.</p>
                         </section>
-            
+
                         <section id="Name" class="main-section">
                             <header>
                                 <h3 id="name">Name</h3>
                             </header>
-            
+
                             <p>Java has jars and beans. Ruby has gems. I suggest we call these reducer bundles "ducks", as in the last syllable of "redux".</p>
                         </section>
-            
+
                         <section id="Usage" class="main-section">
                             <header>
                                 <h3 id="usage">Usage</h3>
                             </header>
-            
+
                             <p>You can still do:</p>
-            
-                            <pre><code class="javascript language-javascript">
-                            import { combineReducers } from 'redux';
-                            import * as reducers from './ducks/index';
-            
-                            const rootReducer = combineReducers(reducers);
-                            export default rootReducer;
+
+                            <pre><code class="javascript language-javascript">import { combineReducers } from 'redux';
+import * as reducers from './ducks/index';
+
+const rootReducer = combineReducers(reducers);
+export default rootReducer;
                             </code></pre>
-            
+
                             <p>You can still do:</p>
-            
-                            <pre><code class="javascript language-javascript">
-                            import * as widgetActions from './ducks/widgets';
+
+                            <pre><code class="javascript language-javascript">import * as widgetActions from './ducks/widgets';
                             </code></pre>
-            
+
                             <p>...and it will only import the action creators, ready to be passed to <code>bindActionCreators()</code>.</p>
-            
+
                             <blockquote>
                                 <p>Actually, it'll also import <code>default</code>, which will be the reducer function. It'll add an action creator named <code>default</code> that won't work. If that's a problem for you, you should enumerate each action creator when importing.</p>
                             </blockquote>
-            
+
                             <p>There will be some times when you want to <code>export</code> something other than an action creator. That's okay, too. The rules don't say that you can <em>only</em> <code>export</code> action creators. When that happens, you'll just have to enumerate the action creators that you want. Not a big deal.</p>
-            
-                            <pre><code class="javascript language-javascript">
-                            import {loadWidgets, createWidget, updateWidget, removeWidget} from './ducks/widgets';
-                            // ...
-                            bindActionCreators({loadWidgets, createWidget, updateWidget, removeWidget}, dispatch);
+
+                            <pre><code class="javascript language-javascript">import {loadWidgets, createWidget, updateWidget, removeWidget} from './ducks/widgets';
+// ...
+bindActionCreators({loadWidgets, createWidget, updateWidget, removeWidget}, dispatch);
                             </code></pre>
                         </section>
-            
+
                         <section id="Example" class="main-section">
                             <header>
                                 <h3 id="example-1">Example</h3>
                             </header>
-            
+
                             <p><a href="https://github.com/erikras/react-redux-universal-hot-example">React Redux Universal Hot Example</a> uses ducks. See <a href="https://github.com/erikras/react-redux-universal-hot-example/tree/master/src/redux/modules"><code>/src/redux/modules</code></a>.</p>
-            
+
                             <p><a href="https://github.com/goopscoop/ga-react-tutorial/tree/6-reduxActionsAndReducers">Todomvc using ducks.</a></p>
                         </section>
-            
+
                         <section id="BattleCry_generators" class="main-section">
                             <header>
                                 <h3 id="battlecrygenerators">BattleCry generators</h3>
                             </header>
-            
+
                             <p>There are configurable <a href="https://github.com/pedsmoreira/battlecry">BattleCry</a> generators ready to be downloaded and help scaffolding ducks:</p>
-            
-                            <pre><code class="sh language-sh">
-                            $ npm install -g battlecry
-                            $ cry download erikras/ducks-modular-redux
-                            $ cry init duck
+
+                            <pre><code class="sh language-sh">$ npm install -g battlecry
+$ cry download erikras/ducks-modular-redux
+$ cry init duck
                             </code></pre>
-            
+
                             <p>Run <code>cry --help</code> to check more info about the generators available;</p>
                         </section>
-            
+
                         <section id="Implementation" class="main-section">
                             <header>
                                 <h3 id="implementation">Implementation</h3>
                             </header>
-            
+
                             <p>The migration to this code structure was <a href="https://github.com/erikras/react-redux-universal-hot-example/commit/3fdf194683abb7c40f3cb7969fd1f8aa6a4f9c57">painless</a>, and I foresee it reducing much future development misery.</p>
-            
+
                             <p>Although it's completely feasable to implement it without any extra library, there are some tools that might help you:</p>
-            
+
                             <ul>
                                 <li><a href="https://github.com/investtools/extensible-duck">extensible-duck</a> - Implementation of the Ducks proposal. With this library you can create reusable and extensible ducks.</li>
-            
+
                                 <li><a href="https://github.com/cyrilluce/saga-duck">saga-duck</a> - Implementation of the Ducks proposal in Typescript with <a href="https://github.com/redux-saga/redux-saga">sagas</a> in mind. Results in reusable and extensible ducks.</li>
-            
+
                                 <li><a href="https://github.com/PlatziDev/redux-duck">redux-duck</a> - Helper function to create Redux modules using the ducks-modular-redux proposal</li>
-            
+
                                 <li><a href="https://github.com/benbeadle/modular-redux-thunk">modular-redux-thunk</a> - A ducks-inspired package to help organize actions, reducers, and selectors together - with built-in redux-thunk support for async actions.</li>
-            
+
                                 <li><a href="https://www.npmjs.com/package/molecular-js">molecular-js</a> - Set of utilities to ease the development of modular state management patterns with Redux (also known as ducks).</li>
-            
+
                                 <li><a href="https://github.com/drpicox/ducks-reducer">ducks-reducer</a> - Function to combine <em>ducks object</em> reducers into one reducer (equivalent to <a href="https://redux.js.org/docs/api/combineReducers.html">combineReducers</a>), and function <a href="https://github.com/drpicox/ducks-middleware">ducks-middleware</a> to combine <em>ducks object</em> middleware into one single middleware compatible with <a href="https://redux.js.org/docs/api/applyMiddleware.html">applyMiddleware</a>.</li>
-            
+
                                 <li><a href="https://github.com/xander27/simple-duck">simple-duck</a> - Class based implementation of modules system, inspired by ducks-modular-redux. All OOP benefits like inheritance and composition. Support combining of duck-module classes and regular reducer functions using <code>combineModules</code> function.</li>
                             </ul>
-            
+
                             <p>Please submit any feedback via an issue or a tweet to <a href="https://twitter.com/erikras">@erikras</a>. It will be much appreciated.</p>
-            
+
                             <p>Happy coding!</p>
-            
+
                             <p>-- Erik Rasmussen</p>
                         </section>
-            
+
                         <section id="Translation" class="main-section">
                             <header>
                                 <h3 id="translation">Translation</h3>
                             </header>
-            
+
                             <p><a href="https://github.com/JisuPark/ducks-modular-redux">한국어</a>
                                 <a href="https://github.com/deadivan/ducks-modular-redux">中文</a>
                                 <a href="https://github.com/mfyz/ducks-modular-redux-tr">Türkçe</a></p>
-            
-                            <hr />
-            
-                            <p><img src="./assets/migrate.jpg" alt="C'mon! Let's migrate all our reducers!" /></p>
-            
-                            <blockquote>
-                                <p>Photo credit to <a href="https://www.flickr.com/photos/24874528@N04/3453886876/">Airwolfhound</a>.</p>
-                            </blockquote>
-            
-                            <hr />
-            
-                            <p>
-                                <a href="https://beerpay.io/erikras/ducks-modular-redux"><img src="./assets/https://beerpay.io/erikras/ducks-modular-redux/badge.svg?style=beer-square" alt="Beerpay" /></a>
-                                <a href="https://beerpay.io/erikras/ducks-modular-redux?focus=wish"><img src="./assets/https://beerpay.io/erikras/ducks-modular-redux/make-wish.svg?style=flat-square" alt="Beerpay" /></a>
-                            </p>
                         </section>
                     </main>
                 </div>
